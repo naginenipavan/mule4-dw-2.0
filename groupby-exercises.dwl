@@ -124,9 +124,8 @@ And merge them to create the following:
 */
 
 
-invoices map(inVal, inKey) -> {
-    invoiceId: inVal.invoiceId,
-    amount: inVal.amount,
-    allocations: (allocations groupBy ('alls')) filterObject (($$) as Number == inVal.invoiceId)
+invoices map(val) -> {
+    invoiceId: val.invoiceId,
+    amount: val.amount,
+    allocations: (allocations groupBy($.invoiceId))
 }
-
