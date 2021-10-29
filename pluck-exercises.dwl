@@ -1,9 +1,6 @@
 %dw 2.0
 output application/json
 
-fun addNum(myArr:Array) = 
-    myArr map ({num: $$} ++ $ )
-
 --- 
 /*
 1. Get a list of the values from the following:
