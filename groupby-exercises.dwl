@@ -37,6 +37,18 @@ var allocations = [
     "allocationId":     6,
     "invoiceId":        3,
     "allocationAmount": 150 }]
+
+// below function used in exercise(3) 
+fun mapInvoice(items) = {
+    invoiceId: items[0].invoiceId,
+    vendorName: items[0].vendorName,
+    total: items[0].total,
+    lineItems: items map() -> {
+        item: $.lineItem,
+        amount: $.lineItemAmount 
+    }
+}
+
 --- 
 /*
 "groupBy"
@@ -191,7 +203,80 @@ Solved: simplest approach using groupBy and reduce
 }) pluck $
 
 
-3. Convert the following xml into desired JSON format
+3. Take the following CSV file,
+
+invoiceId,vendorName,total,lineItem,lineItemAmount
+1,Amazon,100,Sneakers,75
+1,Amazon,100,Shirt,25
+2,Walmart,38,Paper,10
+2,Walmart,38,Towel,28
+
+And transform it into the output:
+[
+  {
+    "invoiceId":  1,
+    "vendorName": "Amazon",
+    "total":      100,
+    "lineItems": [
+      {
+        "item":   "Sneakers",
+        "amount": 75
+      },
+      {
+        "item":   "Shirt",
+        "amount": 25
+      }
+    ]
+  },
+  {
+    "invoiceId":  2,
+    "vendorName": "Walmart",
+    "total":      38,
+    "lineItems": [
+      {
+        "item":   "Paper",
+        "amount": 10
+      },
+      {
+        "item":   "Towel",
+        "amount": 28
+      }
+    ]
+  }
+]
+
+Sovled:
+(payload groupBy($.invoiceId) mapObject(invoice, invKey, invInd) -> {
+    (invKey): mapInvoice(invoice)
+}) pluck $
+
+4. Take the following input and sort it by whether or not "merchantName" is under 10 characters (let's assume your database's "merchantName" field is VARCHAR(10)):
+
+Payload:
+[
+  { "merchantName": "HelloFresh"    },
+  { "merchantName": "Amazon"        },
+  { "merchantName": "Walmart"       },
+  { "merchantName": "Guitar Center" }
+]
+
+You should get the following Output:
+{
+  "true": [
+    { "merchantName": "Amazon"  },
+    { "merchantName": "Walmart" },
+  ],
+  "false": [
+    { "merchantName": "HelloFresh"    },
+    { "merchantName": "Guitar Center" }
+  ]
+}
+
+Solved:
+payload groupBy(sizeOf($.merchantName) < 10 )
+
+
+5. Convert the following xml into desired JSON format
 Input:
 <root>
    <TYPE_A>
