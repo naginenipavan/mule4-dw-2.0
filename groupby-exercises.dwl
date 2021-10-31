@@ -142,7 +142,56 @@ invoices map(invoice, ind) -> {
             map($ - 'invoiceId')
 }
 
-2. Convert the following xml into desired JSON format
+2. Convert the following into desired output:
+Payload:
+[
+  {
+    "id": 2,
+    "test": "123"
+  },
+  {
+    "id": 3,
+    "something": "something"
+  },
+  {
+    "id": 2,
+    "something": "some123"
+  },
+  {
+    "id": 3,
+    "test": "098"
+  },
+  {
+    "id": 4,
+    "test": "faf"
+  }
+]
+
+Output:
+[
+  {
+    "id": 2,
+    "test": "123",
+    "something": "some123"
+  },
+  {
+    "id": 3,
+    "test": "098",
+    "something": "something"
+  },
+  {
+    "id": 4,
+    "test": "faf"
+  }
+]
+
+Solved: simplest approach using groupBy and reduce
+(payload groupBy($.id) mapObject(val, key, ind) -> {
+    (key): {id: key} ++ (val reduce(item, acc={}) -> acc ++ item) - 'id'
+}) pluck $
+
+
+3. Convert the following xml into desired JSON format
 Input:
 <root>
    <TYPE_A>
